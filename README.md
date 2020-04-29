@@ -1,8 +1,8 @@
 SKAL TRIAL SCRAPPING
 
-scrapy startproject <projectname>
+scrapy startproject projectname
 
-scrapy genspider <spidername> <URL>
+scrapy genspider spidername URL
 
 Splash scrapy for accessing the java script objects
 
