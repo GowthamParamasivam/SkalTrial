@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-
+from shutil import which
+import os
 # Scrapy settings for SkalTrial project
 #
 # For simplicity, this file contains only settings considered important or
@@ -56,6 +57,10 @@ ROBOTSTXT_OBEY = True
 #    'SkalTrial.middlewares.SkaltrialDownloaderMiddleware': 543,
 #}
 
+DOWNLOADER_MIDDLEWARES = {
+    'scrapy_selenium.SeleniumMiddleware': 800
+    }
+
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
 #EXTENSIONS = {
@@ -88,3 +93,8 @@ ROBOTSTXT_OBEY = True
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+SELENIUM_DRIVER_NAME = 'chrome'
+SELENIUM_DRIVER_EXECUTABLE_PATH = os.path.abspath("/home/gowthamparamasivam/python/scrappy/trial/trial/projects/SkalTrial/chromedriver")
+SELENIUM_DRIVER_ARGUMENTS=['--headless']
+SELENIUM_BROWSER_EXECUTABLE_PATH = os.path.abspath("/usr/bin/google-chrome-stable")
