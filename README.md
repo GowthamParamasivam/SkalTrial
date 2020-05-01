@@ -22,3 +22,8 @@ install the pymongo
 pip3 install pymongo
 
 docker run -d --network some-network --name some-mongo -e MONGO_INITDB_ROOT_USERNAME=mongoadmin -e MONGO_INITDB_ROOT_PASSWORD=secret -p 8081:8081 mongo
+
+or
+
+check the mongodb.yaml file for docker-compose
+docker-compose -f mongodb.yaml up -d
