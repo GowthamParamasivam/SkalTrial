@@ -25,4 +25,5 @@ class WhiskeyItem(scrapy.Item):
     description1 = scrapy.Field()
     description2 = scrapy.Field()
     extra_notification = scrapy.Field()
+    _id = scrapy.Field()
     pass

@@ -69,6 +69,7 @@ class SystembolagetSpider(scrapy.Spider):
         logging.info("Total Number of products present "+cnt)
 
         #pagination for loading the complete website
+        # c=0
         while(True):
             try:
                 show_button = driver.find_element_by_css_selector(".cmp-btn--show-more")
@@ -76,6 +77,10 @@ class SystembolagetSpider(scrapy.Spider):
                 actions1.move_to_element(show_button)
                 actions1.click(show_button)
                 actions1.perform()
+                element_present = EC.presence_of_element_located((By.CSS_SELECTOR,".cmp-btn--show-more"))
+                WebDriverWait(driver, 1200,60).until(element_present)
+                # c=c+1
+                # driver.save_screenshot("fourth"+str(c)+".png")
                 second_screen_source = driver.page_source
                 second_screen = Selector(text=second_screen_source)
             except NoSuchElementException:
@@ -84,7 +89,7 @@ class SystembolagetSpider(scrapy.Spider):
             except:
                 break
         
-        driver.save_screenshot("fourth.png")
+        # driver.save_screenshot("fourth.png")
 
         #Collecting all the data from the container
         products = second_screen.css(".result-list>.elm-product-list-item-full>a[href]").getall()
