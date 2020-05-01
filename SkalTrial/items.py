@@ -22,4 +22,7 @@ class WhiskeyItem(scrapy.Item):
     quantity = scrapy.Field()
     price = scrapy.Field()
     bottle_text = scrapy.Field()
+    description1 = scrapy.Field()
+    description2 = scrapy.Field()
+    extra_notification = scrapy.Field()
     pass

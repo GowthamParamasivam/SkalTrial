@@ -6,3 +6,9 @@
 second_image.png
 first_request.png
 SkalTrial/spiders/__pycache__/systembolaget.cpython-37.pyc
+*.pyc
+*.png
+SkalTrial/spiders/__pycache__/systembolaget.cpython-37.pyc
+SkalTrial/__pycache__/settings.cpython-37.pyc
+SkalTrial/spiders/__pycache__/systembolaget.cpython-37.pyc
+SkalTrial/__pycache__/settings.cpython-37.pyc
