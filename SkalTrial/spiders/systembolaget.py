@@ -4,6 +4,12 @@ import logging
 from scrapy_selenium import SeleniumRequest
 from scrapy.selector import Selector
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support import expected_conditions as EC
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.common.exceptions import TimeoutException
+from asyncio.tasks import sleep
 
 class SystembolagetSpider(scrapy.Spider):
     name = 'systembolaget'
@@ -43,21 +49,30 @@ class SystembolagetSpider(scrapy.Spider):
         second_screen = Selector(text=second_screen_source)
         logging.info("Second screen source has been converted into an Selector")
 
+        #Waiting till the page gets loaded completely by checking the whether the loader button is present at the bottom.
+        try:
+            element_present = EC.presence_of_element_located((By.CSS_SELECTOR,"li>.cmp-btn"))
+            WebDriverWait(driver, 100).until(element_present)
+        except TimeoutException:
+            logging.error("Page doesn't load, time out error has been occurred")
+            raise TimeoutException
+
         products = second_screen.css(".result-list>.elm-product-list-item-full>a[href]").getall()
+        second_screen
         logging.info("Got all the containers in the page and looping through the products and yielding the values")
         for p1 in products:
             p = Selector(text=p1)
             yield{
                 'product_name':p.css(".elm-product-list-item-full-info>.row-container>.row-1>.col-left>.product-name-bold::text").get(),
                 'product_name2':p.css(".elm-product-list-item-full-info>.row-container>.row-1>.col-left>.product-name-thin::text").get(),
-                'product_price':p.css(".elm-product-list-item-full-info>.row-container>.row-1>.col-right::text").get(),
+                'product_price':p.css(".elm-product-list-item-full-info>.row-container>.row-1>.col-right::text").get().strip().replace(":-","").replace(":-*",""),
                 'product_bottle_text':p.css(".elm-product-list-item-full-info>.row-container>.row-2>.col-right>.info>.bottle-text-short::text").get(),
                 'product_quantity':p.css(".elm-product-list-item-full-info>.row-container>.row-2>.col-right>.info>span.ng-binding:nth-child(2)::text").get()
             }
         logging.info("Yielding has been done successfully")
         pass
 
-
+ 
         #todo pagination pending
         #data source pipelines
         #structured data objects
