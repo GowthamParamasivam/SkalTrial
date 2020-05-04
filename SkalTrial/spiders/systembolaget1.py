@@ -4,14 +4,16 @@ import json
 import logging
 from SkalTrial.items import DrinksLatest
 import datetime
+import re
+from urllib.parse import parse_qs, urlparse
 
 class Systembolaget1Spider(scrapy.Spider):
     name = 'systembolaget1'
     def start_requests(self):
-        start_urls = ['https://www.systembolaget.se/api/productsearch/search/sok-dryck/?subcategory=Whisky&sortfield=Name&sortdirection=Ascending&site=all&fullassortment=1&page=1&nofilters=1']
-        for url in start_urls:
+        sub_cats = ['Bitter','Vitt%20vin','Whisky','Sake','Tequila%20och%20Mezcal']
+        for sub_cat in sub_cats:
             yield scrapy.Request(
-                url=url,
+                url=f'https://www.systembolaget.se/api/productsearch/search/sok-dryck/?subcategory={sub_cat}&sortfield=Name&sortdirection=Ascending&site=all&fullassortment=1&page=1&nofilters=1',
                 callback=self.parse
             )
 
@@ -19,6 +21,9 @@ class Systembolaget1Spider(scrapy.Spider):
         json_resp = json.loads(response.body)
         products = json_resp.get('ProductSearchResults')
         now = datetime.datetime.now()
+        cat = parse_qs(urlparse(str(response.request.url)).query)['subcategory'][0]
+        logging.info(response.request.url)
+        logging.info(cat)
         for product in products:
             Item = DrinksLatest()
             Item['ProductId'] = product.get('ProductId')
@@ -47,6 +52,6 @@ class Systembolaget1Spider(scrapy.Spider):
         logging.info(next_page)
         if next_page:
             yield scrapy.Request(
-                url=f"https://www.systembolaget.se/api/productsearch/search/sok-dryck/?subcategory=Whisky&sortfield=Name&sortdirection=Ascending&site=all&fullassortment=1&page={next_page}&nofilters=1",
+                url=f"https://www.systembolaget.se/api/productsearch/search/sok-dryck/?subcategory={cat}&sortfield=Name&sortdirection=Ascending&site=all&fullassortment=1&page={next_page}&nofilters=1",
                 callback=self.parse
             )
