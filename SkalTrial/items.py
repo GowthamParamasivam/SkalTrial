@@ -52,4 +52,6 @@ class DrinksLatest(scrapy.Item):
     SellStartText = scrapy.Field()
     Availability = scrapy.Field()
     VolumeText = scrapy.Field()
+    image_urls = scrapy.Field()
+    images = scrapy.Field()
     ScrappedDate = scrapy.Field()

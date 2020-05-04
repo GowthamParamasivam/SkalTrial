@@ -27,3 +27,7 @@ or
 
 check the mongodb.yaml file for docker-compose
 docker-compose -f mongodb.yaml up -d
+
+for images need 
+
+pip3 install pillow

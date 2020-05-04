@@ -8,10 +8,12 @@ import datetime
 class Systembolaget1Spider(scrapy.Spider):
     name = 'systembolaget1'
     def start_requests(self):
-        yield scrapy.Request(
-            url="https://www.systembolaget.se/api/productsearch/search/sok-dryck/?searchquery=Whisky&sortdirection=Ascending&site=all&fullassortment=1&page=1&nofilters=1",
-            callback=self.parse
-        )
+        start_urls = ['https://www.systembolaget.se/api/productsearch/search/sok-dryck/?subcategory=Whisky&sortfield=Name&sortdirection=Ascending&site=all&fullassortment=1&page=1&nofilters=1']
+        for url in start_urls:
+            yield scrapy.Request(
+                url=url,
+                callback=self.parse
+            )
 
     def parse(self, response):
         json_resp = json.loads(response.body)
@@ -38,12 +40,13 @@ class Systembolaget1Spider(scrapy.Spider):
             Item['SellStartText'] = product.get('SellStartText')
             Item['Availability'] = product.get('Availability')
             Item['VolumeText'] = product.get('VolumeText')
+            Item['image_urls'] = [product.get('ProductImage').get('ImageUrl')]
             Item['ScrappedDate'] = now.strftime("%Y-%m-%d %H:%M:%S")
             yield Item
         next_page = json_resp.get('Metadata').get('NextPage')
         logging.info(next_page)
         if next_page:
             yield scrapy.Request(
-                url=f"https://www.systembolaget.se/api/productsearch/search/sok-dryck/?searchquery=Whisky&sortdirection=Ascending&site=all&fullassortment=1&page={next_page}&nofilters=1",
+                url=f"https://www.systembolaget.se/api/productsearch/search/sok-dryck/?subcategory=Whisky&sortfield=Name&sortdirection=Ascending&site=all&fullassortment=1&page={next_page}&nofilters=1",
                 callback=self.parse
             )
