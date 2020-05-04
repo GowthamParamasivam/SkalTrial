@@ -12,7 +12,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from asyncio.tasks import sleep
-from SkalTrial.items import WhiskeyItem
+from SkalTrial.items import Drinks
+from datetime import datetime 
+from scrapy.utils.response import open_in_browser
 
 class SystembolagetSpider(scrapy.Spider):
     name = 'systembolaget'
@@ -20,7 +22,7 @@ class SystembolagetSpider(scrapy.Spider):
     start_urls = ['https://www.systembolaget.se/sok-dryck/?searchquery=Whisky']
 
     def start_requests(self):
-        start_urls = ['https://www.systembolaget.se/sok-dryck/?searchquery=Whisky']
+        start_urls = ['https://www.systembolaget.se/sok-dryck/?subcategory=Whisky']
         for url in start_urls:
             yield SeleniumRequest(url=url, screenshot=True,callback=self.parse)
 
@@ -48,6 +50,7 @@ class SystembolagetSpider(scrapy.Spider):
 
         #Regular Expression to find the value in the parantheses ^.*?\([^\d]*(\d+)[^\d]*\).*$
         pattern = "^.*?\([^\d]*(\d+)[^\d]*\).*$"      
+        category_pattern = "\=(.*)"
 
         #Converting the second page source into selectors
         second_screen_source = driver.page_source
@@ -68,8 +71,14 @@ class SystembolagetSpider(scrapy.Spider):
         cnt = res[0]
         logging.info("Total Number of products present "+cnt)
 
+        #Finding the category from the URL
+        logging.info(str(response.request.url))
+        cat1 = re.findall(category_pattern,response.request.url)
+        cat = cat1[0]
+        logging.info("Category we are scrapping is "+cat)
+
         #pagination for loading the complete website
-        # c=0
+        c=0
         while(True):
             try:
                 show_button = driver.find_element_by_css_selector(".cmp-btn--show-more")
@@ -77,10 +86,11 @@ class SystembolagetSpider(scrapy.Spider):
                 actions1.move_to_element(show_button)
                 actions1.click(show_button)
                 actions1.perform()
-                element_present = EC.presence_of_element_located((By.CSS_SELECTOR,".cmp-btn--show-more"))
+                WebDriverWait(driver,10)
+                element_present = EC.element_to_be_clickable((By.CSS_SELECTOR,".cmp-btn--show-more"))
                 WebDriverWait(driver, 1200,60).until(element_present)
-                # c=c+1
-                # driver.save_screenshot("fourth"+str(c)+".png")
+                c=c+1
+                driver.save_screenshot("fourth"+str(c)+".png")
                 second_screen_source = driver.page_source
                 second_screen = Selector(text=second_screen_source)
             except NoSuchElementException:
@@ -97,30 +107,22 @@ class SystembolagetSpider(scrapy.Spider):
         for p1 in products:
             p = Selector(text=p1)
             # yield{
-            Item = WhiskeyItem()
+            Item = Drinks()
             Item['name1']=p.css(".elm-product-list-item-full-info>.row-container>.row-1>.col-left>.product-name-bold::text").get()
             Item['name2']=p.css(".elm-product-list-item-full-info>.row-container>.row-1>.col-left>.product-name-thin::text").get()
-            Item['price']=p.css(".elm-product-list-item-full-info>.row-container>.row-1>.col-right::text").get().strip().replace(":-","").replace(":-*","")
+            Item['price']=p.css(".elm-product-list-item-full-info>.row-container>.row-1>.col-right::text").get().strip().replace(":-","").replace(":-*","").replace(" ","")
             Item['bottle_text']=p.css(".elm-product-list-item-full-info>.row-container>.row-2>.col-right>.info>.bottle-text-short::text").get()
             Item['quantity']=p.css(".elm-product-list-item-full-info>.row-container>.row-2>.col-right>.info>span.ng-binding:nth-child(2)::text").get()
             Item['description1']=p.css(".elm-product-list-item-full-info > div.row-container.clearfix > div.row-3 > div > span::text").get()
             Item['description2']=p.css(".elm-product-list-item-full-info > div.row-container.clearfix > div.row-4 > div > span::text").get()
-            # Item['extra_notification']=p.css("").get()
-            # #main > .elm-product-list-item-full-info > div.row-container.clearfix > div.row-3 > div > span
-            #main > div:nth-child(2) > div > div > section > div.results.full-assortment > ul > li:nth-child(1) > a > div.elm-product-list-item-full-info > div.row-container.clearfix > div.row-4 > div > span
-            # }
+            Item['availability']=p.css(".elm-product-list-item-full-info > div.row-container.clearfix > div.row-5.additional-info > div>.ext-unstyled-list>.availability::text").get()
+            Item['sales_starts_at']=p.css(".elm-product-list-item-full-info > div.row-container.clearfix > div.row-5.additional-info > div>.ext-unstyled-list>.sellstart::text").get()
+            Item['scrapped_on']=datetime.now()
+            Item['category']=cat
             logging.info(Item['price'])
             yield Item
         logging.info("Yielding has been done successfully")
         pass
-
- 
-        #todo pagination pending
-        #data source pipelines
-        #structured data objects
-
-
-
 
 
 ###################################################################################################

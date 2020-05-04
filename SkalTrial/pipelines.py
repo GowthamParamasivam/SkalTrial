@@ -8,12 +8,12 @@ import logging
 import pymongo
 
 class SkaltrialPipeline:
-    collection_name = "whisky_collections"
+    collection_name = "ProductsList"
 
     def open_spider(self,spider):
         logging.info("Pipeline *************** Open spider")
         self.client = pymongo.MongoClient("mongodb://hello:hello@127.0.0.1:27017/?authSource=admin&authMechanism=SCRAM-SHA-256")
-        self.db = self.client['WHISKY']
+        self.db = self.client['systembolaget']
         logging.info(str(self.client.server_info))
 
     def close_spider(self,spider):
