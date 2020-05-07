@@ -32,8 +32,10 @@ class MyImagesPipeline(ImagesPipeline):
                 yield scrapy.Request(image_url)
         except ValueError:
             logging.info("Exception of Value Error happened")
+        except KeyError:
+            logging.info("Exception of Key Error happened")
 
     def item_completed(self, results, item, info):
-        logging.info(item['_id'])
-        logging.info(item['image_urls'])
+        image_paths = [x['path'] for ok, x in results if ok]
+        item['image_paths'] = image_paths
         return item

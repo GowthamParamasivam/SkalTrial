@@ -1,0 +1,117 @@
+# -*- coding: utf-8 -*-
+import scrapy
+import json
+import logging
+from SkalTrial.items import DrinksLatest, Store
+import datetime
+import re
+from urllib.parse import parse_qs, urlparse
+
+class Systembolaget1Spider(scrapy.Spider):
+    name = 'systembolaget1'
+    total = 0
+    parsed_count = 0
+    def start_requests(self):
+        # sub_cats = ['Bitter','Vitt%20vin','Whisky','Sake','Tequila%20och%20Mezcal']
+        sub_cats = ['Bitter']
+        for sub_cat in sub_cats:
+            yield scrapy.Request(
+                url=f'https://www.systembolaget.se/api/productsearch/search/sok-dryck/?subcategory={sub_cat}&sortfield=Name&sortdirection=Ascending&site=all&fullassortment=1&page=0&nofilters=1',
+                callback=self.parse
+            )
+
+    def parse(self, response):
+        json_resp = json.loads(response.body)
+        products = json_resp.get('ProductSearchResults')
+        now = datetime.datetime.now()
+        cat = parse_qs(urlparse(str(response.request.url)).query)['subcategory'][0]
+        logging.info(response.request.url)
+        logging.info(cat)
+        for product in products:
+            Item = DrinksLatest()
+            Item['ProductId'] = product.get('ProductId')
+            Item['ProductNumber'] = product.get('ProductNumber')
+            Item['ProductNameBold'] = product.get('ProductNameBold')
+            Item['ProductNameThin'] = product.get('ProductNameThin')
+            Item['Category'] = product.get('Category')
+            Item['ProductNameBold'] = product.get('ProductNameBold')
+            Item['ProductNumberShort'] = product.get('ProductNumberShort')
+            Item['ProducerName'] = product.get('ProducerName')
+            Item['BottleTextShort'] = product.get('BottleTextShort')
+            Item['Volume'] = product.get('Volume')
+            Item['Price'] = product.get('Price')
+            Item['Country'] = product.get('Country')
+            Item['SubCategory'] = product.get('SubCategory')
+            Item['Type'] = product.get('Type')
+            Item['BeverageDescriptionShort'] = product.get('BeverageDescriptionShort')
+            Item['Taste'] = product.get('Taste')
+            Item['SellStartText'] = product.get('SellStartText')
+            Item['Availability'] = product.get('Availability')
+            Item['VolumeText'] = product.get('VolumeText')
+            Item['image_urls'] = [product.get('ProductImage').get('ImageUrl')]
+            Item['ScrappedDate'] = now.strftime("%Y-%m-%d %H:%M:%S")
+            # Forming url for the stores
+            pro_id = str(Item['ProductId'])
+            find_store_url = f'https://www.systembolaget.se/api/site/findallstoreswhereproducthasstock/{pro_id}/1'
+            logging.info(find_store_url)
+            #parse the json response
+            yield scrapy.Request(find_store_url,callback=self.parse_store,meta = {'item':Item,'cnt_url':1})
+        next_page = json_resp.get('Metadata').get('NextPage')
+        logging.info("**********************"+str(next_page))
+        if int(next_page) != -1:
+            yield scrapy.Request(
+                url=f"https://www.systembolaget.se/api/productsearch/search/sok-dryck/?subcategory={cat}&sortfield=Name&sortdirection=Ascending&site=all&fullassortment=1&page={next_page}&nofilters=1",
+                callback=self.parse
+            )
+    
+    def parse_store(self,response):
+        logging.info("inside the parse store")
+        json_store = json.loads(response.body)
+        total = json_store.get('DocCount')
+        logging.info(total)
+        Item = response.meta['item']
+        cnt_url = response.meta['cnt_url']
+        url = str(response.request.url).rsplit('/',1)[0]
+        cnt_url = cnt_url+1
+        if(int(total)==0):
+            logging.info("inside the if trying to yield")
+            yield Item
+            return
+        #parsing the data
+        try:
+            stre_list = list(Item['Store'])
+        except KeyError:
+            stre_list = []
+        stores = json_store.get('SiteStockBalance')
+        if stores is not None:
+            logging.info("store is not null")
+            for store1 in stores:
+                stre = Store()
+                stre['StoreNumber'] = store1.get('Site').get('StoreNumber')
+                stre['SiteId'] = store1.get('Site').get('SiteId')
+                stre['Alias'] = store1.get('Site').get('Alias')
+                stre['StreetAddress'] = store1.get('Site').get('StreetAddress')
+                stre['PostalCode'] = store1.get('Site').get('PostalCode')
+                stre['City'] = store1.get('Site').get('City')
+                stre['Phone'] = store1.get('Site').get('Phone')
+                stre['County'] = store1.get('Site').get('County')
+                stre['IsTastingStore'] = store1.get('Site').get('IsTastingStore')
+                stre['IsActiveForAgentOrder'] = store1.get('Site').get('IsActiveForAgentOrder')
+                stre['IsStore'] = store1.get('Site').get('IsStore')
+                stre['IsDepot'] = store1.get('Site').get('IsDepot')
+                stre['IsAgent'] = store1.get('Site').get('IsAgent')
+                stre['OpeningHours'] = store1.get('Site').get('OpeningHours')
+                stre['DeliverySchedule'] = store1.get('Site').get('DeliverySchedule')
+                stre['PickupHours'] = store1.get('Site').get('PickupHours')
+                stre['SiteUrl'] = store1.get('Site').get('SiteUrl')
+                stre['OpeningHoursTodayText'] = store1.get('Site').get('OpeningHoursTodayText')
+                stre['Shelf'] = store1.get('Stock').get('Shelf')
+                stre['Stock'] = store1.get('Stock').get('Stock')
+                stre['SectionLabel'] = store1.get('Stock').get('SectionLabel')
+                stre['ShelfLabel'] = store1.get('Stock').get('ShelfLabel')
+                stre['StockLabel'] = store1.get('Stock').get('StockLabel')
+                stre['NotYetSaleStarted'] = store1.get('Stock').get('NotYetSaleStarted')
+                stre_list.append(stre)
+            Item['Store'] = stre_list
+        yield scrapy.Request(url+"/"+str(cnt_url),callback=self.parse_store,meta={'item':Item,'cnt_url':cnt_url})
+

@@ -70,8 +70,8 @@ DOWNLOADER_MIDDLEWARES = {
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   'SkalTrial.pipelines.SkaltrialPipeline': 300,
-   'SkalTrial.pipelines.MyImagesPipeline': 500
+   'SkalTrial.pipelines.SkaltrialPipeline': 500,
+   'SkalTrial.pipelines.MyImagesPipeline': 300
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -100,3 +100,8 @@ SELENIUM_DRIVER_EXECUTABLE_PATH = os.path.abspath("/home/gowthamparamasivam/pyth
 SELENIUM_DRIVER_ARGUMENTS=['--headless']
 SELENIUM_BROWSER_EXECUTABLE_PATH = os.path.abspath("/usr/bin/google-chrome-stable")
 IMAGES_STORE = '/home/gowthamparamasivam/skal/images'
+
+LOG_STDOUT = True
+LOG_FILE = '/home/gowthamparamasivam/python/scrappy/trial/trial/projects/SkalTrial/scrapy_output.txt'
+
+DOWNLOAD_TIMEOUT = 360
