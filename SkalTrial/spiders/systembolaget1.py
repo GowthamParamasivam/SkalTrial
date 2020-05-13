@@ -17,7 +17,7 @@ class Systembolaget1Spider(scrapy.Spider):
         # sub_cats = ['Bitter']
         for sub_cat in sub_cats:
             yield scrapy.Request(
-                url=f'https://www.systembolaget.se/api/productsearch/search/sok-dryck/?subcategory={sub_cat}&sortfield=Name&sortdirection=Ascending&site=all&fullassortment=1&page=1&nofilters=1',
+                url=f'https://www.systembolaget.se/api/productsearch/search/sok-dryck/?subcategory={sub_cat}&sortfield=Name&sortdirection=Ascending&site=all&fullassortment=1&page=0&nofilters=1',
                 callback=self.parse
             )
  
@@ -100,10 +100,19 @@ class Systembolaget1Spider(scrapy.Spider):
                 stre['ShelfLabel'] = store1.get('Stock').get('ShelfLabel')
                 stre['StockLabel'] = store1.get('Stock').get('StockLabel')
                 stre['NotYetSaleStarted'] = store1.get('Stock').get('NotYetSaleStarted')
+                stre['Latitude'] = store1.get('Site').get('Position').get('Lat')
+                stre['Longitude'] = store1.get('Site').get('Position').get('Long')
+                stre['Rt90x'] = store1.get('Site').get('Position').get('Rt90x')
+                stre['Rt90y'] = store1.get('Site').get('Position').get('Rt90y')
+                stre['StoreTimingToday'] = 'N/A'
                 # append the store the list
                 stre_list.append(stre)
                 Item['Store'] = stre_list
+
                 # send the current existing stores list.
-                yield scrapy.Request(url+"/"+str(cnt_url), callback=self.parse_store, meta={'item': Item, 'cnt_url': cnt_url, 'stre_list': stre_list})
+            yield scrapy.Request(url+"/"+str(cnt_url), callback=self.parse_store, meta={'item': Item, 'cnt_url': cnt_url, 'stre_list': stre_list})
         else:
             yield Item
+        
+
+
