@@ -39,11 +39,13 @@ class SkaltrialPipeline:
             try:
                 self.db[self.sotre_collection].create_index([("Lat",1),("Long",1)])
                 self.db[self.sotre_collection].create_index([("OpenToday",1)])
+                self.db[self.sotre_collection].create_index([("SiteId",1)])
                 logging.warning("stopping Time fo the Store Spider")
             except:
                 logging.warning("Exception occurred while closing the store database")
         if spider.name in ['systembolaget1']:
             self.db[self.collection_name].create_index([("Store.Latitude",1),("Store.Longitude",1)])
+            self.db[self.collection_name].create_index([("Store.SiteId",1)])
             try:
                 stores = self.db[self.sotre_collection].find({'OpenToday':{ '$ne': None }})
                 logging.info("************")
