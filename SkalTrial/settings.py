@@ -96,12 +96,12 @@ ITEM_PIPELINES = {
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
-SELENIUM_DRIVER_NAME = 'chrome'
-SELENIUM_DRIVER_EXECUTABLE_PATH = os.path.abspath("/home/gowthamparamasivam/python/scrappy/trial/trial/projects/SkalTrial/chromedriver")
-SELENIUM_DRIVER_ARGUMENTS=['--headless']
-SELENIUM_BROWSER_EXECUTABLE_PATH = os.path.abspath("/usr/bin/google-chrome-stable")
-IMAGES_STORE = '/home/gowthamparamasivam/skal/images'
+# SELENIUM_DRIVER_NAME = 'chrome'
+# SELENIUM_DRIVER_EXECUTABLE_PATH = os.path.abspath("/home/gowthamparamasivam/python/scrappy/trial/trial/projects/SkalTrial/chromedriver")
+# SELENIUM_DRIVER_ARGUMENTS=['--headless']
+# SELENIUM_BROWSER_EXECUTABLE_PATH = os.path.abspath("/usr/bin/google-chrome-stable")
+IMAGES_STORE = '/root/SkalScrapingImage'
 
 LOG_STDOUT = True
-LOG_FILE = '/home/gowthamparamasivam/python/scrappy/trial/trial/projects/SkalTrial/scrapy_output.txt'
-LOG_LEVEL = 'DEBUG'
+LOG_FILE = '/root/SkalScrapingLog/scrapy_output.txt'
+LOG_LEVEL = 'WARN'

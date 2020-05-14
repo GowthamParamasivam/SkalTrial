@@ -14,21 +14,21 @@ class SkaltrialItem(scrapy.Item):
     pass
 
 
-class Drinks(scrapy.Item):
-    # define the fields for your item here like:
-    _id = scrapy.Field()
-    name1 = scrapy.Field()
-    name2 = scrapy.Field()
-    quantity = scrapy.Field()
-    price = scrapy.Field()
-    bottle_text = scrapy.Field()
-    description1 = scrapy.Field()
-    description2 = scrapy.Field()
-    availability = scrapy.Field()
-    sales_starts_at = scrapy.Field()
-    category = scrapy.Field()
-    scrapped_on = scrapy.Field(serializer=str)
-    pass
+# class Drinks(scrapy.Item):
+#     # define the fields for your item here like:
+#     _id = scrapy.Field()
+#     name1 = scrapy.Field()
+#     name2 = scrapy.Field()
+#     quantity = scrapy.Field()
+#     price = scrapy.Field()
+#     bottle_text = scrapy.Field()
+#     description1 = scrapy.Field()
+#     description2 = scrapy.Field()
+#     availability = scrapy.Field()
+#     sales_starts_at = scrapy.Field()
+#     category = scrapy.Field()
+#     scrapped_on = scrapy.Field(serializer=str)
+#     pass
 
 class DrinksLatest(scrapy.Item):
     _id = scrapy.Field()

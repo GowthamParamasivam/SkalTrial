@@ -22,11 +22,13 @@ class SkaltrialPipeline:
         if spider.name in ['systembolagetstore']:
             try:
                 self.db[self.sotre_collection].drop()
+                logging.warn("Starting Time fo the Store Spider"+now.strftime("%Y-%m-%d %H:%M:%S"))
             except:
                 logging.info("Exception occurred while deleting the store database")
         if spider.name in ['systembolaget1']:
             try:
                 self.db[self.collection_name].drop()
+                logging.warn("Starting Time fo the Product Spider"+now.strftime("%Y-%m-%d %H:%M:%S"))
             except Exception as ex:
                 logging.info(str(ex))
                 logging.info("Exception occurred while deleting the products database")
@@ -36,6 +38,7 @@ class SkaltrialPipeline:
             try:
                 self.db[self.sotre_collection].create_index([("Lat",1),("Long",1)])
                 self.db[self.sotre_collection].create_index([("OpenToday",1)])
+                logging.warn("stopping Time fo the Store Spider"+now.strftime("%Y-%m-%d %H:%M:%S"))
             except:
                 logging.info("Exception occurred while closing the store database")
         if spider.name in ['systembolaget1']:
@@ -47,7 +50,7 @@ class SkaltrialPipeline:
                 for store in stores:
                     # result = self.db[self.collection_name].update({"Store.Latitude":{"$eq":store['Lat']},"Store.Longitude":{"$eq":store['Long']},"Store.StoreTimingToday":{"$exists" : False}},{ "$set": { "Store.$['SiteId'].StoreTimingToday":store['OpenToday']}},{ "arrayFilters": [{"SiteId": { '$eq': store['SiteId'] } } ]},multi=True)
                     result = self.db[self.collection_name].update({"Store.SiteId":store['SiteId']},{ "$set": { "Store.$.StoreTimingToday":store['OpenToday']}},multi=True)
-                    logging.info(str(result))
+                    logging.warn("stopping Time fo the product Spider"+now.strftime("%Y-%m-%d %H:%M:%S"))
             except Exception as ex:
                 logging.info("Exception occurred while closing the product database")
                 logging.info(str(ex))
