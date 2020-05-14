@@ -104,4 +104,4 @@ IMAGES_STORE = '/root/SkalScrapingImage'
 
 LOG_STDOUT = True
 LOG_FILE = '/root/SkalScrapingLog/scrapy_output.txt'
-LOG_LEVEL = 'WARN'
+LOG_LEVEL = 'WARNING'

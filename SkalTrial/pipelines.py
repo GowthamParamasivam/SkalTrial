@@ -7,6 +7,7 @@
 import logging
 import pymongo
 import scrapy
+import datetime
 from scrapy.pipelines.images import ImagesPipeline
 from scrapy import Request, Selector
 import requests
@@ -22,37 +23,37 @@ class SkaltrialPipeline:
         if spider.name in ['systembolagetstore']:
             try:
                 self.db[self.sotre_collection].drop()
-                logging.warn("Starting Time fo the Store Spider"+now.strftime("%Y-%m-%d %H:%M:%S"))
+                logging.warning("Starting Time fo the Store Spider")
             except:
-                logging.info("Exception occurred while deleting the store database")
+                logging.warning("Exception occurred while deleting the store database")
         if spider.name in ['systembolaget1']:
             try:
                 self.db[self.collection_name].drop()
-                logging.warn("Starting Time fo the Product Spider"+now.strftime("%Y-%m-%d %H:%M:%S"))
+                logging.warning("Starting Time fo the Product Spider")
             except Exception as ex:
                 logging.info(str(ex))
-                logging.info("Exception occurred while deleting the products database")
+                logging.warning("Exception occurred while deleting the products database")
 
     def close_spider(self,spider):
         if spider.name in ['systembolagetstore']:
             try:
                 self.db[self.sotre_collection].create_index([("Lat",1),("Long",1)])
                 self.db[self.sotre_collection].create_index([("OpenToday",1)])
-                logging.warn("stopping Time fo the Store Spider"+now.strftime("%Y-%m-%d %H:%M:%S"))
+                logging.warning("stopping Time fo the Store Spider")
             except:
-                logging.info("Exception occurred while closing the store database")
+                logging.warning("Exception occurred while closing the store database")
         if spider.name in ['systembolaget1']:
             self.db[self.collection_name].create_index([("Store.Latitude",1),("Store.Longitude",1)])
             try:
                 stores = self.db[self.sotre_collection].find({'OpenToday':{ '$ne': None }})
                 logging.info("************")
                 logging.info(str(stores.count()))
+                logging.warning("stopping Time fo the product Spider")
                 for store in stores:
                     # result = self.db[self.collection_name].update({"Store.Latitude":{"$eq":store['Lat']},"Store.Longitude":{"$eq":store['Long']},"Store.StoreTimingToday":{"$exists" : False}},{ "$set": { "Store.$['SiteId'].StoreTimingToday":store['OpenToday']}},{ "arrayFilters": [{"SiteId": { '$eq': store['SiteId'] } } ]},multi=True)
                     result = self.db[self.collection_name].update({"Store.SiteId":store['SiteId']},{ "$set": { "Store.$.StoreTimingToday":store['OpenToday']}},multi=True)
-                    logging.warn("stopping Time fo the product Spider"+now.strftime("%Y-%m-%d %H:%M:%S"))
             except Exception as ex:
-                logging.info("Exception occurred while closing the product database")
+                logging.warning("Exception occurred while closing the product database")
                 logging.info(str(ex))
         self.client.close()
 
