@@ -29,6 +29,7 @@ class SystembolagetstoreSpider(scrapy.Spider):
             storeopen['SiteId'] = store.get('SiteId')
             storeopen['IsAgent'] = store.get('IsAgent')
             storeopen['IsTastingStore'] = store.get('IsTastingStore')
+            storeopen['ScrappedDate'] = now.strftime("%Y-%m-%d %H:%M:%S")
             yield storeopen
         for store in Agents:
             storeopen = StoreOpen()
@@ -42,4 +43,5 @@ class SystembolagetstoreSpider(scrapy.Spider):
             storeopen['SiteId'] = store.get('SiteId')
             storeopen['IsAgent'] = store.get('IsAgent')
             storeopen['IsTastingStore'] = store.get('IsTastingStore')
+            storeopen['ScrappedDate'] = now.strftime("%Y-%m-%d %H:%M:%S")
             yield storeopen

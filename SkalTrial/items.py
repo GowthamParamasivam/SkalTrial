@@ -101,3 +101,4 @@ class StoreOpen(scrapy.Item):
     SiteId = scrapy.Field()
     IsAgent = scrapy.Field()
     IsTastingStore = scrapy.Field()
+    ScrappedDate = scrapy.Field()

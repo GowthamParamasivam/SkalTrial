@@ -43,20 +43,22 @@ class SkaltrialPipeline:
                 logging.warning("stopping Time fo the Store Spider")
             except:
                 logging.warning("Exception occurred while closing the store database")
+            logging.warning(self.stats.get_value('item_scraped_count'))
         if spider.name in ['systembolaget1']:
             self.db[self.collection_name].create_index([("Store.Latitude",1),("Store.Longitude",1)])
             self.db[self.collection_name].create_index([("Store.SiteId",1)])
             try:
                 stores = self.db[self.sotre_collection].find({'OpenToday':{ '$ne': None }})
                 logging.info("************")
-                logging.info(str(stores.count()))
-                logging.warning("stopping Time fo the product Spider")
+                logging.info(str(stores.count()))                
                 for store in stores:
                     # result = self.db[self.collection_name].update({"Store.Latitude":{"$eq":store['Lat']},"Store.Longitude":{"$eq":store['Long']},"Store.StoreTimingToday":{"$exists" : False}},{ "$set": { "Store.$['SiteId'].StoreTimingToday":store['OpenToday']}},{ "arrayFilters": [{"SiteId": { '$eq': store['SiteId'] } } ]},multi=True)
                     result = self.db[self.collection_name].update({"Store.SiteId":store['SiteId']},{ "$set": { "Store.$.StoreTimingToday":store['OpenToday']}},multi=True)
             except Exception as ex:
                 logging.warning("Exception occurred while closing the product database")
                 logging.info(str(ex))
+        logging.warning("stopping Time fo the product Spider")
+        logging.warning(self.stats.get_value('item_scraped_count'))
         self.client.close()
 
     def process_item(self, item, spider):
@@ -71,7 +73,13 @@ class SkaltrialPipeline:
         if isinstance(item,StoreOpen):
             self.db[self.sotre_collection].insert(item)
         return item
+    
+    def __init__(self, stats):
+        self.stats = stats
 
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(crawler.stats)
 
 class MyImagesPipeline(ImagesPipeline):
 
