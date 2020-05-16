@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import scrapy
 import json
+import datetime
 from SkalTrial.items import StoreOpen
 
 
@@ -19,6 +20,7 @@ class SystembolagetstoreSpider(scrapy.Spider):
         Agents = json_resp.get('Agents')
         for store in stores:
             storeopen = StoreOpen()
+            now = datetime.datetime.now()
             storeopen['Alias'] = store.get('Alias')
             storeopen['Address'] = store.get('Address')
             storeopen['City'] = store.get('City')
@@ -33,6 +35,7 @@ class SystembolagetstoreSpider(scrapy.Spider):
             yield storeopen
         for store in Agents:
             storeopen = StoreOpen()
+            now = datetime.datetime.now()
             storeopen['Alias'] = store.get('Alias')
             storeopen['Address'] = store.get('Address')
             storeopen['City'] = store.get('City')
