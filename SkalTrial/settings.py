@@ -105,3 +105,5 @@ IMAGES_STORE = '/home/gowthamparamasivam/skal/images'
 LOG_STDOUT = True
 LOG_FILE = '/home/gowthamparamasivam/python/scrappy/trial/trial/projects/SkalTrial/scrapy_output.txt'
 LOG_LEVEL = 'DEBUG'
+
+DOWNLOADER_CLIENT_TLS_CIPHERS='DEFAULT:!DH'

@@ -88,6 +88,8 @@ class Store(scrapy.Item):
     Rt90y = scrapy.Field()
     StoreTimingToday = scrapy.Field()
     NotYetSaleStarted = scrapy.Field()
+    Location = scrapy.Field()
+    ProductId = scrapy.Field()
 
 class StoreOpen(scrapy.Item):
     _id = scrapy.Field()
@@ -101,3 +103,7 @@ class StoreOpen(scrapy.Item):
     SiteId = scrapy.Field()
     IsAgent = scrapy.Field()
     IsTastingStore = scrapy.Field()
+
+class Location(scrapy.Item):
+    type = scrapy.Field()
+    coordinates = scrapy.Field()

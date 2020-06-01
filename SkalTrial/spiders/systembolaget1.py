@@ -4,7 +4,7 @@ import json
 import logging
 import datetime
 import re
-from SkalTrial.items import DrinksLatest, Store
+from SkalTrial.items import DrinksLatest, Location, Store
 from urllib.parse import parse_qs, urlparse
   
 class Systembolaget1Spider(scrapy.Spider):
@@ -13,8 +13,8 @@ class Systembolaget1Spider(scrapy.Spider):
     parsed_count = 0
  
     def start_requests(self):
-        sub_cats = ['Bitter','Vitt%20vin','Whisky','Sake','Tequila%20och%20Mezcal']
-        # sub_cats = ['Bitter']
+        # sub_cats = ['Bitter','Vitt%20vin','Whisky','Sake','Tequila%20och%20Mezcal']
+        sub_cats = ['Bitter']
         for sub_cat in sub_cats:
             yield scrapy.Request(
                 url=f'https://www.systembolaget.se/api/productsearch/search/sok-dryck/?subcategory={sub_cat}&sortfield=Name&sortdirection=Ascending&site=all&fullassortment=1&page=0&nofilters=1',
@@ -51,6 +51,7 @@ class Systembolaget1Spider(scrapy.Spider):
             Item['VolumeText'] = product.get('VolumeText')
             Item['image_urls'] = [product.get('ProductImage').get('ImageUrl')]
             Item['ScrappedDate'] = now.strftime("%Y-%m-%d %H:%M:%S")
+            Item['Store']=[]
             # Forming url for the stores
             find_store_url = f'https://www.systembolaget.se/api/site/findallstoreswhereproducthasstock/{Item["ProductId"]}/1'
             # You need  to send the stores list in the request meta
@@ -69,6 +70,7 @@ class Systembolaget1Spider(scrapy.Spider):
         json_store = json.loads(response.body)
         total = json_store.get('DocCount')
         Item = response.meta['item']
+        productid = Item['ProductId']
         cnt_url = response.meta['cnt_url']
         url = str(response.request.url).rsplit('/', 1)[0]
         cnt_url = cnt_url+1
@@ -76,6 +78,7 @@ class Systembolaget1Spider(scrapy.Spider):
             stores = json_store.get('SiteStockBalance')
             for store1 in stores:
                 stre = Store()
+                loc = Location()
                 stre['StoreNumber'] = store1.get('Site').get('StoreNumber')
                 stre['SiteId'] = store1.get('Site').get('SiteId')
                 stre['Alias'] = store1.get('Site').get('Alias')
@@ -105,6 +108,14 @@ class Systembolaget1Spider(scrapy.Spider):
                 stre['Rt90x'] = store1.get('Site').get('Position').get('Rt90x')
                 stre['Rt90y'] = store1.get('Site').get('Position').get('Rt90y')
                 stre['StoreTimingToday'] = 'N/A'
+                stre['ProductId'] = productid
+                # Location class fixing
+                loc['type'] = 'Point'
+                list1 = []
+                list1.append(store1.get('Site').get('Position').get('Lat'))
+                list1.append(store1.get('Site').get('Position').get('Long'))
+                loc['coordinates'] = list1
+                stre['Location'] = loc
                 # append the store the list
                 stre_list.append(stre)
                 Item['Store'] = stre_list
