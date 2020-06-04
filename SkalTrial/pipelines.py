@@ -30,6 +30,7 @@ class SkaltrialPipeline:
             try:
                 self.db[self.collection_name].drop()
                 logging.warning("Starting Time fo the Product Spider")
+                self.db['Stores'].drop()
             except Exception as ex:
                 logging.info(str(ex))
                 logging.warning("Exception occurred while deleting the products database")
@@ -45,15 +46,23 @@ class SkaltrialPipeline:
                 logging.warning("Exception occurred while closing the store database")
             logging.warning(self.stats.get_value('item_scraped_count'))
         if spider.name in ['systembolaget1']:
-            self.db[self.collection_name].create_index([("Store.Latitude",1),("Store.Longitude",1)])
-            self.db[self.collection_name].create_index([("Store.SiteId",1)])
+            self.db[self.collection_name].create_index([("Store.Location","2dsphere")])
             try:
                 stores = self.db[self.sotre_collection].find({'OpenToday':{ '$ne': None }})
                 logging.info("************")
                 logging.info(str(stores.count()))                
                 for store in stores:
-                    # result = self.db[self.collection_name].update({"Store.Latitude":{"$eq":store['Lat']},"Store.Longitude":{"$eq":store['Long']},"Store.StoreTimingToday":{"$exists" : False}},{ "$set": { "Store.$['SiteId'].StoreTimingToday":store['OpenToday']}},{ "arrayFilters": [{"SiteId": { '$eq': store['SiteId'] } } ]},multi=True)
                     result = self.db[self.collection_name].update({"Store.SiteId":store['SiteId']},{ "$set": { "Store.$.StoreTimingToday":store['OpenToday']}},multi=True)
+                    products = self.db[self.collection_name].find()
+                for product in products:
+                    stores1=[]
+                    if(product['Store']==None):
+                        break
+                    stores1 = product['Store']
+                    for st in stores1:
+                        self.db['Stores'].insert(st)
+                #Adding the index to the stores
+                self.db['Stores'].create_index([("Location","2dsphere")])
             except Exception as ex:
                 logging.warning("Exception occurred while closing the product database")
                 logging.info(str(ex))
@@ -63,15 +72,11 @@ class SkaltrialPipeline:
 
     def process_item(self, item, spider):
         if isinstance(item,DrinksLatest):
-            # if 'Store' in item and item['Store'] is not None:
-            #     stores = item['Store']
-            #     for store in stores:
-            #         storeopen = self.db[self.sotre_collection].find_one({'Lat':store['Latitude'],'Long':store['Longitude']})
-            #         if storeopen is not None:
-            #             store['StoreTimingToday'] = storeopen['OpenToday']
             self.db[self.collection_name].insert(item)
         if isinstance(item,StoreOpen):
             self.db[self.sotre_collection].insert(item)
+        if isinstance(item,Store):
+            self.db['Stores'].insert(item)
         return item
     
     def __init__(self, stats):
@@ -101,13 +106,6 @@ class MyImagesPipeline(ImagesPipeline):
 
 
 class MyPipelineToAddOpeningTime:
-    # def __init__(self, crawler):
-    #     self.crawler = crawler
-    
-    # @classmethod
-    # def from_crawler(cls, crawler):
-    #     return cls(crawler)
-
     def process_item(self, item, spider):
         base_url = 'https://www.systembolaget.se'
         try:

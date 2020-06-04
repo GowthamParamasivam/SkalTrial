@@ -13,23 +13,6 @@ class SkaltrialItem(scrapy.Item):
     # name = scrapy.Field()
     pass
 
-
-# class Drinks(scrapy.Item):
-#     # define the fields for your item here like:
-#     _id = scrapy.Field()
-#     name1 = scrapy.Field()
-#     name2 = scrapy.Field()
-#     quantity = scrapy.Field()
-#     price = scrapy.Field()
-#     bottle_text = scrapy.Field()
-#     description1 = scrapy.Field()
-#     description2 = scrapy.Field()
-#     availability = scrapy.Field()
-#     sales_starts_at = scrapy.Field()
-#     category = scrapy.Field()
-#     scrapped_on = scrapy.Field(serializer=str)
-#     pass
-
 class DrinksLatest(scrapy.Item):
     _id = scrapy.Field()
     ProductId = scrapy.Field()
@@ -88,7 +71,8 @@ class Store(scrapy.Item):
     Rt90y = scrapy.Field()
     StoreTimingToday = scrapy.Field()
     NotYetSaleStarted = scrapy.Field()
-
+    Location = scrapy.Field()
+    ProductId = scrapy.Field()
 class StoreOpen(scrapy.Item):
     _id = scrapy.Field()
     Alias = scrapy.Field()
@@ -102,3 +86,7 @@ class StoreOpen(scrapy.Item):
     IsAgent = scrapy.Field()
     IsTastingStore = scrapy.Field()
     ScrappedDate = scrapy.Field()
+
+class Location(scrapy.Item):
+    type = scrapy.Field()
+    coordinates = scrapy.Field()
