@@ -11,7 +11,7 @@ import datetime
 from scrapy.pipelines.images import ImagesPipeline
 from scrapy import Request, Selector
 import requests
-from SkalTrial.items import DrinksLatest, StoreOpen
+from SkalTrial.items import DrinksLatest, StoreOpen, Store
 
 class SkaltrialPipeline:
     collection_name = "ProductsList"
