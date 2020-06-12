@@ -102,6 +102,6 @@ ITEM_PIPELINES = {
 # SELENIUM_BROWSER_EXECUTABLE_PATH = os.path.abspath("/usr/bin/google-chrome-stable")
 IMAGES_STORE = '/root/SkalScrapingImage'
 
-LOG_STDOUT = True
-LOG_FILE = '/root/SkalScrapingLog/scrapy_output.txt'
-LOG_LEVEL = 'DEBUG'
+# LOG_STDOUT = True
+# LOG_FILE = '/root/SkalScrapingLog/scrapy_output.txt'
+# LOG_LEVEL = 'DEBUG'
