@@ -26,6 +26,7 @@ class SkaltrialPipeline:
                 logging.warning("Starting Time fo the Store Spider")
             except:
                 logging.warning("Exception occurred while deleting the store database")
+                # Since systembolaget1 is the first spider, we need to do the cleaning and start fresh
         if spider.name in ['systembolaget1']:
             try:
                 self.db[self.collection_name].drop()
@@ -45,7 +46,8 @@ class SkaltrialPipeline:
             except:
                 logging.warning("Exception occurred while closing the store database")
             logging.warning(self.stats.get_value('item_scraped_count'))
-        if spider.name in ['systembolaget1','systembolaget2']:
+            # Since systembolaget4 is the last running spider we are creating index in this part
+        if spider.name in ['systembolaget4']:
             self.db[self.collection_name].create_index([("Store.Location","2dsphere")])
             try:
                 stores = self.db[self.sotre_collection].find({'OpenToday':{ '$ne': None }})
