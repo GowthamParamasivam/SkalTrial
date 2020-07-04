@@ -42,6 +42,8 @@ class SkaltrialPipeline:
                 self.db[self.sotre_collection].create_index([("Lat",1),("Long",1)])
                 self.db[self.sotre_collection].create_index([("OpenToday",1)])
                 self.db[self.sotre_collection].create_index([("SiteId",1)])
+                # Creating index for the productlist collection based on productId field
+                self.db[self.collection_name].create_index([("ProductId",1)])
                 logging.warning("stopping Time fo the Store Spider")
             except:
                 logging.warning("Exception occurred while closing the store database")
@@ -68,12 +70,15 @@ class SkaltrialPipeline:
             except Exception as ex:
                 logging.warning("Exception occurred while closing the product database")
                 logging.info(str(ex))
-        logging.warning("stopping Time fo the product Spider")
+        logging.warning("stopping Time of the product Spider")
         logging.warning(self.stats.get_value('item_scraped_count'))
         self.client.close()
 
     def process_item(self, item, spider):
         if isinstance(item,DrinksLatest):
+            # Deleting the item if there is already in the database
+            self.db[self.collection_name].delete_one({'ProductId':item.ProductId})
+            # Inserting the item into the database
             self.db[self.collection_name].insert(item)
         if isinstance(item,StoreOpen):
             self.db[self.sotre_collection].insert(item)
