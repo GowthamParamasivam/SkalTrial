@@ -2,6 +2,7 @@
 import scrapy
 import json
 import datetime
+import re
 from SkalTrial.items import StoreOpen
 
 

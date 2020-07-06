@@ -53,6 +53,7 @@ class SkaltrialPipeline:
             # Creating index for the productlist collection based on productId field
             self.db[self.collection_name].create_index([("ProductId",1)])
             try:
+                #  Finding the stores with no open Today timing
                 stores = self.db[self.sotre_collection].find({'OpenToday':{ '$ne': None }})
                 logging.info("************")
                 logging.info(str(stores.count()))                
