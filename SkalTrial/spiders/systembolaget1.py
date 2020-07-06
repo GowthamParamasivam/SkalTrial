@@ -13,16 +13,16 @@ class Systembolaget1Spider(scrapy.Spider):
     parsed_count = 0
  
     def start_requests(self):
-        # sub_cats = ['Bitter','Vitt%20vin','Whisky','Sake','Tequila%20och%20Mezcal',
-        #             'Anissprit','Aperitif%20och%20dessert','Alkoholfritt','Armagnac%20och%20Brandy',
-        #             'Blanddrycker','Blandl%C3%A5dor%20vin','Calvados','Mousserande%20vin','Cider','Cognac',
-        #             'Drinkar%20och%20Cocktails','Dryckestillbeh%C3%B6r','Frukt%20och%20Druvsprit',
-        #             'Gl%C3%B6gg%20och%20Gl%C3%BChwein','Grappa%20och%20Marc','Lik%C3%B6r','Aperitif%20och%20dessert',
-        #             'Presentf%C3%B6rpackningar','Punsch','Rom','Ros%C3%A9vin','Ros%C3%A9%20-%20l%C3%A4gre%20alkoholhalt',
-        #             'Smaksatt%20sprit','Sprit%20av%20flera%20typer','Vermouth','Vitt%20vin','Vita%20-%20l%C3%A4gre%20alkoholhalt',
-        #             'Vodka%20och%20Br%C3%A4nnvin','%C3%96l','R%C3%B6tt%20vin','R%C3%B6da%20-%20l%C3%A4gre%20alkoholhalt',
-        #             'Akvavit%20och%20Kryddat%20br%C3%A4nnvin','Gin%20och%20Genever','Mousserande%20vin']
-        sub_cats = ['Aperitif%20och%20dessert']
+        sub_cats = ['Bitter','Vitt%20vin','Whisky','Sake','Tequila%20och%20Mezcal',
+                    'Anissprit','Aperitif%20och%20dessert','Alkoholfritt','Armagnac%20och%20Brandy',
+                    'Blanddrycker','Blandl%C3%A5dor%20vin','Calvados','Mousserande%20vin','Cider','Cognac',
+                    'Drinkar%20och%20Cocktails','Dryckestillbeh%C3%B6r','Frukt%20och%20Druvsprit',
+                    'Gl%C3%B6gg%20och%20Gl%C3%BChwein','Grappa%20och%20Marc','Lik%C3%B6r','Aperitif%20och%20dessert',
+                    'Presentf%C3%B6rpackningar','Punsch','Rom','Ros%C3%A9vin','Ros%C3%A9%20-%20l%C3%A4gre%20alkoholhalt',
+                    'Smaksatt%20sprit','Sprit%20av%20flera%20typer','Vermouth','Vitt%20vin','Vita%20-%20l%C3%A4gre%20alkoholhalt',
+                    'Vodka%20och%20Br%C3%A4nnvin','%C3%96l','R%C3%B6tt%20vin','R%C3%B6da%20-%20l%C3%A4gre%20alkoholhalt',
+                    'Akvavit%20och%20Kryddat%20br%C3%A4nnvin','Gin%20och%20Genever','Mousserande%20vin']
+        # sub_cats = ['Aperitif%20och%20dessert']
         for sub_cat in sub_cats:
             yield scrapy.Request(
                 url=f'https://www.systembolaget.se/api/productsearch/search/sok-dryck/?subcategory={sub_cat}&sortfield=Name&sortdirection=Ascending&site=all&fullassortment=1&page=0&nofilters=1',
