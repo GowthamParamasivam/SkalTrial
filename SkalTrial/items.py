@@ -39,6 +39,7 @@ class DrinksLatest(scrapy.Item):
     images = scrapy.Field()
     image_paths = scrapy.Field()
     Store = scrapy.Field()
+    RecyclingFee = scrapy.Field()
     ScrappedDate = scrapy.Field()
 
 class Store(scrapy.Item):
@@ -73,6 +74,7 @@ class Store(scrapy.Item):
     NotYetSaleStarted = scrapy.Field()
     Location = scrapy.Field()
     ProductId = scrapy.Field()
+    
 class StoreOpen(scrapy.Item):
     _id = scrapy.Field()
     Alias = scrapy.Field()

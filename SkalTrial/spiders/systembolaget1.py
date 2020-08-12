@@ -60,6 +60,7 @@ class Systembolaget1Spider(scrapy.Spider):
             Item['image_urls'] = [product.get('ProductImage').get('ImageUrl')]
             Item['ScrappedDate'] = now.strftime("%Y-%m-%d %H:%M:%S")
             Item['Store']=[]
+            Item['RecyclingFee'] = product.get('RecycleFee')
             # Forming url for the stores
             find_store_url = f'https://www.systembolaget.se/api/site/findallstoreswhereproducthasstock/{Item["ProductId"]}/1'
             # You need  to send the stores list in the request meta
