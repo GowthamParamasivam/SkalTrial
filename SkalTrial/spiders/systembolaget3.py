@@ -14,7 +14,7 @@ class Systembolaget1Spider(scrapy.Spider):
  
     def start_requests(self):
         sub_cats = ['Portvin','Sherry%20%26%20Montilla','Smaksatta%20viner%20%26%20fruktviner',
-        'Madeira','Smaksatta%20viner%20%26%20fruktviner','%C3%96vrigt%20starkvin']
+        'Madeira','%C3%96vrigt%20starkvin']
         # sub_cats = ['Bitter']
         for sub_cat in sub_cats:
             yield scrapy.Request(
