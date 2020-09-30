@@ -106,11 +106,23 @@ class MyImagesPipeline(ImagesPipeline):
                 logging.info("Exception of Value Error happened in pipeline")
             except KeyError:
                 logging.info("Exception of Key Error happened in pipeline")
+        if isinstance(item,DrinksLatest):
+            try:
+                yield scrapy.Request(item['CountryFlagUrl'])
+            except ValueError:
+                logging.info("Exception of Value Error happened in pipeline")
+            except KeyError:
+                logging.info("Exception of Key Error happened in pipeline")
 
     def item_completed(self, results, item, info):
-        if isinstance(item,DrinksLatest):
-            image_paths = [x['path'] for ok, x in results if ok]
-            item['image_paths'] = image_paths
+        if isinstance(item, DrinksLatest):
+            url = [x['url'] for ok, x in results if ok]
+            if str(url[0]).find('https://www.systembolaget.se/content/assets/images/flags') != -1:
+                countryflagpath = [x['path'] for ok, x in results if ok]
+                item['CountryFlagPath'] = countryflagpath
+            else:
+                image_paths = [x['path'] for ok, x in results if ok]
+                item['image_paths'] = image_paths
         return item
 
 

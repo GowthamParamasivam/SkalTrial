@@ -41,6 +41,8 @@ class DrinksLatest(scrapy.Item):
     Store = scrapy.Field()
     RecyclingFee = scrapy.Field()
     ScrappedDate = scrapy.Field()
+    CountryFlagUrl = scrapy.Field()
+    CountryFlagPath = scrapy.Field()
 
 class Store(scrapy.Item):
     StoreNumber = scrapy.Field()
