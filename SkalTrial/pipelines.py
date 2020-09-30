@@ -116,13 +116,21 @@ class MyImagesPipeline(ImagesPipeline):
 
     def item_completed(self, results, item, info):
         if isinstance(item, DrinksLatest):
-            url = [x['url'] for ok, x in results if ok]
-            if str(url[0]).find('https://www.systembolaget.se/content/assets/images/flags') != -1:
-                countryflagpath = [x['path'] for ok, x in results if ok]
-                item['CountryFlagPath'] = countryflagpath
-            else:
-                image_paths = [x['path'] for ok, x in results if ok]
-                item['image_paths'] = image_paths
+            # url = [x['url'] for ok, x in results if ok]
+            # for i in url:
+            #     if str(i).find('images/flags') != -1:
+            #         countryflagpath = [x['path'] for ok, x in results if ok]
+            #         item['CountryFlagPath'] = countryflagpath
+            #     else:
+            #         image_paths = [x['path'] for ok, x in results if ok]
+            #         item['image_paths'] = image_paths
+
+            for result in [x for ok, x in results if ok]:
+                logging.error(result)
+                if str(result['url']).find('images/flags') != -1:
+                    item['CountryFlagPath'] = result['path']
+                else:
+                    item['image_paths'] = result['path']
         return item
 
 
